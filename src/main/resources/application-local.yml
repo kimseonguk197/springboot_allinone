@@ -1,0 +1,51 @@
+#spring에서 application.properties 또는 application.yml은 환경설정파일
+#yml형식은 계층구조를 가진 가독성 좋은 형식
+server:
+  port: 8080
+spring:
+  config:
+    activate:
+      on-profile: local
+#  아래는 jdbc의 기본 db 연결 설정. jdbc뿐만아니라, mybatis, jpa등 spring의 대부분의 db 관리기술에서 사용.
+#  스키마는 사전 생성 필요, 테이블의 경우 jdbc/mybatis는 사전생성 필요.
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/board
+    username: root
+    password: test1234
+#  jpa를 사용하기 위한 환경설정
+  jpa:
+    database: mysql
+#    innoDB를 쓰겠다라는 설정
+    database-platform: org.hibernate.dialect.MySQLDialect
+#    ddl문(테이블생성) 자동생성 여부 : true
+    generate-ddl: true
+#    jpa(인터페이스 명세)의 실질적인 구현체는 hibernate
+    hibernate:
+#      ddl문 자동생성에 대한 모드(create, update, validate)설정
+#      create : 매번(서버재시작마다) table을 전체 drop후 재생성 - 프로젝트최초구성시
+#      update : 엔티티의 변경사항만 alter를 적용. 기존데이터 유지. - 개발서버목적
+#      validate : 실제DB와의 차이점을 check만 하고 ddl문 실행X(콘솔에 변경사항만 출력) - 운영서버목적
+      ddl-auto : update
+#      콘솔창에 ddl, dml 등의 쿼리를 출력하여 보여주는 옵션
+    show_sql: true
+
+
+jwt:
+  expiration: 30
+  #  인코딩된 문자 32자 이상 필요.(특수문자) : base64 encoder
+  #  beyondaccesstokensecretkeybeyondaccesstokensecretkeybeyondaccesstokensecretkey
+  secretKey: YmV5b25kYWNjZXNzdG9rZW5zZWNyZXRrZXliZXlvbmRhY2Nlc3N0b2tlbnNlY3JldGtleWJleW9uZGFjY2Vzc3Rva2Vuc2VjcmV0a2V5
+
+logging:
+  level:
+    root: debug
+
+#aws s3 접근하기 위한 계정 세팅
+aws:
+  credentials:
+    access-key: yyyyyyyyyyyyyyyyy
+    secret-key: xxxxxxxxxxxxxxxxxxx
+  region: ap-northeast-2
+  s3:
+    bucket1: bradkim-board-profile-image

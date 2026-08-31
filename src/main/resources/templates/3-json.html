@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>url-encoded</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<form>
+    이름 : <input type="text" id="name">
+    이메일 : <input type="text" id="email">
+    <button type="button" onclick="postData()">제출</button>
+</form>
+<script>
+    async function postData(){
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        const serverData = {name, email};
+        await axios.post("http://localhost:8081/student1/json", serverData);
+    }
+</script>
+</body>
+</html>
