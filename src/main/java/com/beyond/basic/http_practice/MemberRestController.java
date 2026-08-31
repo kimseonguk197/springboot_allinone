@@ -1,13 +1,18 @@
 package com.beyond.basic.http_practice;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 @RestController
 @RequestMapping("/member")
-public class StudentRestController {
+public class MemberRestController {
 //    get요청의 url의 데이터 추출방식 : pathvariable, 쿼리파라미터
 //    case1. pathvariable방식을 통해 사용자로부터 url에서 데이터 추출
 //    데이터의 형식 : /member/path/1
@@ -41,8 +46,8 @@ public class StudentRestController {
 //    데이터형식 : member/param3?name=hongildong&email=hong@naver.com
     @GetMapping("/param3")
 //    @ModelAttribute는 생략가능.
-    public String param3(@ModelAttribute Student1 student1){
-        System.out.println(student1);
+    public String param3(@ModelAttribute Member1 member1){
+        System.out.println(member1);
         return "OK";
     }
 
@@ -51,8 +56,8 @@ public class StudentRestController {
 //    형식 : body부에 name=hongildong&email=hong@naver.com
     @PostMapping("/url-encoded")
 //    형식이 url의 파라미터방식과 동일하므로, RequestParam 또는 데이터바인딩 가능
-    public String urlEncoded(@ModelAttribute Student1 student1){
-        System.out.println(student1);
+    public String urlEncoded(@ModelAttribute Member1 member1){
+        System.out.println(member1);
         return "ok";
     }
 
@@ -60,15 +65,15 @@ public class StudentRestController {
 //    case2-1)1개의 이미지만 있는 경우
 //    형식 : body부에 name=hongildong&email=hong@naver.com&profileImage=xxxx
     @PostMapping("/multipart-formdata")
-    public String multipartFormdata(@ModelAttribute Student1 student1, @RequestParam(value = "profileImage")MultipartFile profileImage){
-        System.out.println(student1);
+    public String multipartFormdata(@ModelAttribute Member1 member1, @RequestParam(value = "profileImage")MultipartFile profileImage){
+        System.out.println(member1);
         System.out.println(profileImage.getOriginalFilename());
         return "ok";
     }
 //    case2-2)여러개의 이미지가 있는 경우
     @PostMapping("/multipart-formdata-images")
-    public String multipartFormdataImages(@ModelAttribute Student1 student1, @RequestParam(value = "profileImages") List<MultipartFile> profileImages){
-        System.out.println(student1);
+    public String multipartFormdataImages(@ModelAttribute Member1 member1, @RequestParam(value = "profileImages") List<MultipartFile> profileImages){
+        System.out.println(member1);
         System.out.println(profileImages.size());
         return "ok";
     }
@@ -78,8 +83,8 @@ public class StudentRestController {
 //    형식 : {"name":"hongildong", "email":"hong@naver.com"}
     @PostMapping("/json")
 //    RequestBody : json데이터를 객체로 파싱
-    public String json(@RequestBody Student1 student1){
-        System.out.println(student1);
+    public String json(@RequestBody Member1 member1){
+        System.out.println(member1);
         return "ok";
     }
 
@@ -87,16 +92,16 @@ public class StudentRestController {
 //    형식 : [{"name":"hongildong", "email":"hong1@naver.com"}, {"name":"hongildong", "email":"hong2@naver.com"}, {"name":"hongildong", "email":"hong3@naver.com"}]
     @PostMapping("/json-list")
 //    RequestBody : json데이터를 객체로 파싱
-    public String jsonList(@RequestBody List<Student1> student1List){
-        System.out.println(student1List);
+    public String jsonList(@RequestBody List<Member1> member1List){
+        System.out.println(member1List);
         return "ok";
     }
 
 //    case 3-3)중첩된 json 데이터 처리
 //    데이터형식 : {"name":"hongildong", "email":"hong1@naver.com", "scores":[{"subject":"math", "point":100}, {"subject":"english", "point":90}, {"subject":"korean", "point":100}]}
     @PostMapping("/json-nested")
-    public String jsonNested(@RequestBody Student2 student2){
-        System.out.println(student2);
+    public String jsonNested(@RequestBody Member2 member2){
+        System.out.println(member2);
         return "ok";
     }
     
@@ -105,13 +110,33 @@ public class StudentRestController {
 //    결론은 multipart-formdata구조안에 json을 넣는 방식.
     @PostMapping("/json-file")
 //    json과 file을 함께처리해야할때는 일반적으로 RequestPart 사용
-    public String jsonFile(@RequestPart("member") Student1 student1,
+    public String jsonFile(@RequestPart("member") Member1 member1,
                            @RequestPart("profileImage") MultipartFile profileImage
                            ){
-        System.out.println(student1);
+        System.out.println(member1);
         System.out.println(profileImage.getOriginalFilename());
         return "ok";
     }
 
+    @Autowired
+    private DataSource dataSource;
+//    table 생성 후 데이터 insert
+//    create table member(name varchar(255), email varchar(255));
+    @PostMapping("/json/db")
+    public String jsonDb(@RequestBody Member1 member1){
+        try {
+            Connection connection = dataSource.getConnection();
+            String sql = "insert into member(name, email) values(?, ?)";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, member1.getName());
+            ps.setString(2, member1.getEmail());
+            ps.executeUpdate();
+            System.out.println("db 저장 완료");
+        } catch (SQLException e) {
+            System.out.println("db 저장 실패");
+            throw new RuntimeException(e);
+        }
+        return "ok";
+    }
 
 }

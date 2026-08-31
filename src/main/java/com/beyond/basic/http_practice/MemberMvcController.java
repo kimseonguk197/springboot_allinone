@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 //Controller 어노테이션과 url매핑을 통해 사용자의 요청이 메서드로 분기처리
 @Controller
 @RequestMapping("/member")
-public class StudentMvcController {
+public class MemberMvcController {
 //    get요청 리턴의 case : text, json, html(mvc)
 //    case1. 서버가 사용자에게 text데이터 return
     @GetMapping("")
@@ -23,8 +23,8 @@ public class StudentMvcController {
 //    case2.서버가 사용자에게 json형식의 문자데이터 return
     @GetMapping("/json")
     @ResponseBody
-    public Student1 jsonDataReturn() throws JsonProcessingException {
-        Student1 m1 = new Student1("h1", "h1@naver.com");
+    public Member1 jsonDataReturn() throws JsonProcessingException {
+        Member1 m1 = new Member1("h1", "h1@naver.com");
 //        직접 json을 직렬화 할필요 없이, return 타입에 객체가 있다면 자동으로 직렬화
 //        ObjectMapper o1 = new ObjectMapper();
 //        String data = o1.writeValueAsString(m1);

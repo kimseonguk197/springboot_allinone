@@ -9,7 +9,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Student2 {
+public class Member2 {
     private String name;
     private String email;
     private List<Score> scores;

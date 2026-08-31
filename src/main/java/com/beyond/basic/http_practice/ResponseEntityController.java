@@ -1,6 +1,5 @@
 package com.beyond.basic.http_practice;
 
-import com.beyond.basic.simple_board.author.dtos.AuthorDetailDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,11 +34,7 @@ public class ResponseEntityController {
 //    ResponseEntity, ?(any), 빌더패턴을 사용하여 상태코드, header, body를 유연하게 생성
     @GetMapping("/method3")
     public ResponseEntity<?> method3(){
-        AuthorDetailDto dto = AuthorDetailDto.builder()
-                .id(1L).name("hongildong")
-                .email("hong@naver.com")
-                .password("1234")
-                .build();
+        Member1 dto = new Member1("hongildong", "hong@naver.com");
         return ResponseEntity
                 .status(HttpStatus.CREATED)
 //                .header("Content-Type", "application/json")
@@ -48,11 +43,7 @@ public class ResponseEntityController {
 
     @GetMapping("/method4")
     public ResponseEntity<?> method4(){
-        AuthorDetailDto dto = AuthorDetailDto.builder()
-                .id(1L).name("hongildong")
-                .email("hong@naver.com")
-                .password("1234")
-                .build();
+        Member1 dto = new Member1("hongildong", "hong@naver.com");
         return ResponseEntity.ok(dto);
     }
 

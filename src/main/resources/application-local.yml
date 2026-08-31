@@ -13,22 +13,22 @@ spring:
     url: jdbc:mysql://localhost:3306/board
     username: root
     password: test1234
-#  jpa를 사용하기 위한 환경설정
-  jpa:
-    database: mysql
-#    innoDB를 쓰겠다라는 설정
-    database-platform: org.hibernate.dialect.MySQLDialect
-#    ddl문(테이블생성) 자동생성 여부 : true
-    generate-ddl: true
-#    jpa(인터페이스 명세)의 실질적인 구현체는 hibernate
-    hibernate:
-#      ddl문 자동생성에 대한 모드(create, update, validate)설정
-#      create : 매번(서버재시작마다) table을 전체 drop후 재생성 - 프로젝트최초구성시
-#      update : 엔티티의 변경사항만 alter를 적용. 기존데이터 유지. - 개발서버목적
-#      validate : 실제DB와의 차이점을 check만 하고 ddl문 실행X(콘솔에 변경사항만 출력) - 운영서버목적
-      ddl-auto : update
-#      콘솔창에 ddl, dml 등의 쿼리를 출력하여 보여주는 옵션
-    show_sql: true
+##  jpa를 사용하기 위한 환경설정
+#  jpa:
+#    database: mysql
+##    innoDB를 쓰겠다라는 설정
+#    database-platform: org.hibernate.dialect.MySQLDialect
+##    ddl문(테이블생성) 자동생성 여부 : true
+#    generate-ddl: true
+##    jpa(인터페이스 명세)의 실질적인 구현체는 hibernate
+#    hibernate:
+##      ddl문 자동생성에 대한 모드(create, update, validate)설정
+##      create : 매번(서버재시작마다) table을 전체 drop후 재생성 - 프로젝트최초구성시
+##      update : 엔티티의 변경사항만 alter를 적용. 기존데이터 유지. - 개발서버목적
+##      validate : 실제DB와의 차이점을 check만 하고 ddl문 실행X(콘솔에 변경사항만 출력) - 운영서버목적
+#      ddl-auto : update
+##      콘솔창에 ddl, dml 등의 쿼리를 출력하여 보여주는 옵션
+#    show_sql: true
 
 
 jwt:
@@ -39,7 +39,7 @@ jwt:
 
 logging:
   level:
-    root: debug
+    root: info
 
 #aws s3 접근하기 위한 계정 세팅
 aws:

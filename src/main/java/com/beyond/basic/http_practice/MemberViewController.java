@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/post-view")
-public class StudentViewController {
+public class MemberViewController {
     @GetMapping("/url-encoded")
     public String urlEncoded(){
         return "1-url_encoded";
