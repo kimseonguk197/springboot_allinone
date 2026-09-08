@@ -1,4 +1,4 @@
-package com.beyond.basic.http_practice;
+package com.beyond.basic.p1_http;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,4 +1,4 @@
-package com.beyond.basic.http_practice;
+package com.beyond.basic.p1_http;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,11 +13,4 @@ public class Member2 {
     private String name;
     private String email;
     private List<Score> scores;
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Data
-    public static class Score{
-        private String subject;
-        private int point;
-    }
 }
