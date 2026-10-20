@@ -29,16 +29,11 @@ public class Author extends BaseTimeEntity {
 //    @Setter
     private String password;
 
-//    enum타입은 내부적으로 숫자값을 가지고 있으나, 문자형태로 저장하겠다는 어노테이션
+////    enum타입은 내부적으로 숫자값을 가지고 있으나, 문자형태로 저장하겠다는 어노테이션
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private Role role = Role.USER;
-
-    public Author(String name, String email, String password, Role role) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.role = role;
-    }
+//    private Role role;
 
     @OneToOne(mappedBy = "author", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Address address;

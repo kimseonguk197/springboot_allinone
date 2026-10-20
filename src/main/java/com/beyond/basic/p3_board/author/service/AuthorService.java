@@ -9,6 +9,10 @@ import com.beyond.basic.p3_board.post.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,6 +58,7 @@ public class AuthorService {
         Author author = Author.builder().name(dto.getName())
                 .email(dto.getEmail())
                 .password(passwordEncoder.encode(dto.getPassword()))
+//                .role(dto.getRole())
                 .build();
 ////        cascade persist를 활용한 예시
 //        author.getPostList().add(Post.builder().title("안녕하세요").author(author).build());
@@ -91,6 +96,7 @@ public class AuthorService {
 
 //    트랜잭션 처리가 필요없는 조회만 있는 메서드의 경우 성능향상을 위해 readOnly처리
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN')")
     public AuthorDetailDto findById(Long id){
         Optional<Author> optAuthor = authorRepository.findById(id);
         Author author = optAuthor.orElseThrow(()-> new EntityNotFoundException("entity is not found"));
@@ -102,7 +108,9 @@ public class AuthorService {
         return dto;
     }
 
-
+//    PreAuthorize : Authentcation객체 안의권한정보를 확인하는 어노테이션
+//    2개 이상의 Role을 허용하는 경우 : "hasRole('ADMIN') or hasRole('SELLER') "
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional(readOnly = true)
     public List<AuthorListDto> findAll(){
         List<Author> authorList = authorRepository.findAll();
@@ -144,12 +152,13 @@ public class AuthorService {
     }
 
 
-//    @Transactional(readOnly = true)
-//    public AuthorDetailDto myinfo(){
-//        String email = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-//        Optional<Author> optAuthor = authorRepository.findByEmail(email);
-//        Author author = optAuthor.orElseThrow(()-> new NoSuchElementException("entity is not found"));
-//        AuthorDetailDto dto = AuthorDetailDto.fromEntity(author);
-//        return dto;
-//    }
+    @Transactional(readOnly = true)
+    public AuthorDetailDto myinfo(String email){
+        Optional<Author> optAuthor = authorRepository.findByEmail(email);
+        Author author = optAuthor.orElseThrow(()-> new NoSuchElementException("entity is not found"));
+        AuthorDetailDto dto = AuthorDetailDto.builder()
+                .id(author.getId()).name(author.getName()).email(author.getEmail())
+                .build();
+        return dto;
+    }
 }

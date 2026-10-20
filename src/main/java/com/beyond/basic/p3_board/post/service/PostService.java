@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +34,8 @@ public class PostService {
     }
 
     public void save(PostCreateDto dto){
-        Author author = authorRepository.findByEmail(dto.getAuthorEmail()).orElseThrow(()->new EntityNotFoundException("email is not found"));
+        String email = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        Author author = authorRepository.findByEmail(email).orElseThrow(()->new EntityNotFoundException("email is not found"));
         Post post = Post.builder()
                 .title(dto.getTitle())
                 .contents(dto.getContents())

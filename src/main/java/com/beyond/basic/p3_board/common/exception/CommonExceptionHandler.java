@@ -4,6 +4,7 @@ import com.beyond.basic.p3_board.common.dtos.CommonErrorDto;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -52,15 +53,15 @@ public class CommonExceptionHandler {
                 .build();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(dto);
     }
-//    @ExceptionHandler(AuthorizationDeniedException.class)
-//    public ResponseEntity<?> authorizedException(AuthorizationDeniedException e){
-//        e.printStackTrace();
-//        CommonErrorDto dto = CommonErrorDto.builder()
-//                .status_code(403)
-//                .error_message(e.getMessage())
-//                .build();
-//        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(dto);
-//    }
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<?> authorizedException(AuthorizationDeniedException e){
+        e.printStackTrace();
+        CommonErrorDto dto = CommonErrorDto.builder()
+                .status_code(403)
+                .error_message(e.getMessage())
+                .build();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(dto);
+    }
 
 
 

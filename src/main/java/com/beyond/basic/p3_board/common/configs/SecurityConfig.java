@@ -35,20 +35,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .cors(c->c.configurationSource(corsConfigurationSource()))
-//                csrf공격(일반적으로 쿠키를 활용한 공격)에 대한 방어 비활성화
-                .csrf(AbstractHttpConfigurer::disable)
-//                http basic은 email/pw를 인코딩하여 인증(전송)하는 간단한 인증방식. 비활성화.
-//                .httpBasic(AbstractHttpConfigurer::disable)
-//                세션로그인방식 비활성화
-//                .sessionManagement(a->a.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                token을 검증하고, Authentication객체 생성
-                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
-//                .exceptionHandling(e->e.authenticationEntryPoint(jwtAuthenticationHandler))
-//                지정한 특정 url을 제외한 모든 요청에 대해서 authenticated(인증처리)하겠다 라는 의미
-                .authorizeHttpRequests(a->a.requestMatchers("/author/create", "/author/login").permitAll().anyRequest().authenticated())
-
-                .build();
+        .cors(c->c.configurationSource(corsConfigurationSource()))
+        .csrf(AbstractHttpConfigurer::disable)
+        .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
+        .authorizeHttpRequests(a->a.requestMatchers("/author/create", "/author/login")
+                    .permitAll().anyRequest().authenticated())
+        .build();
     }
 
     public CorsConfigurationSource corsConfigurationSource(){

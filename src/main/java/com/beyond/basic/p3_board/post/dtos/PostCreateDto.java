@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class PostCreateDto {
     private String title;
     private String contents;
-    private String authorEmail;
+//    private String authorEmail;
     @Builder.Default
     private String appointment = "N";
     @Builder.Default

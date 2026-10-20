@@ -2,6 +2,7 @@ package com.beyond.basic.p3_board.author.dtos;
 
 import com.beyond.basic.p3_board.author.domain.Address;
 import com.beyond.basic.p3_board.author.domain.Author;
+import com.beyond.basic.p3_board.author.domain.Role;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,7 @@ public class AuthorCreateDto {
     @NotBlank(message = "password는 비어있으면 안됩니다.")
     @Size(min = 8, message = "패스워드의 길이가 너무 짧습니다.")
     private String password;
+//    private Role role;
     private AddressCreateDto address;
     @AllArgsConstructor
     @NoArgsConstructor

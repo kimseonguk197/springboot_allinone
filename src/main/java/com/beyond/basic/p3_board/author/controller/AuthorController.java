@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,16 +40,12 @@ public class AuthorController {
     }
 
     @GetMapping("/list")
-//    PreAuthorize : Authentcation객체 안의 권한정보를 확인하는 어노테이션
-//    2개 이상의 Role을 허용하는 경우 : "hasRole('ADMIN') or hasRole('SELLER') "
-//    @PreAuthorize("hasRole('ADMIN')")
     public List<AuthorListDto> findAll(){
         List<AuthorListDto> dtoList = authorService.findAll();
         return dtoList;
     }
 
     @GetMapping("/{id}")
-//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> findById(@PathVariable Long id){
         try {
             AuthorDetailDto dto = authorService.findById(id);
@@ -77,19 +74,40 @@ public class AuthorController {
 
 
     @PostMapping("/login")
-    public String login(@RequestBody AuthorLoginDto dto){
+    public ResponseEntity<?> login(@RequestBody AuthorLoginDto dto){
         Author author = authorService.login(dto);
 //        토큰 생성 및 리턴
         String token = jwtTokenProvider.createToken(author);
-        return token;
+        String tokenRt = jwtTokenProvider.createTokenRt(author);
+
+        AuthorLoginResDto authorLoginResDto = AuthorLoginResDto.builder()
+                .accessToken(token)
+                .refreshToken(tokenRt)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(authorLoginResDto);
     }
 
 
-//    @GetMapping("/myinfo")
-//    public ResponseEntity<?> myinfo(@AuthenticationPrincipal String principal){
-//        System.out.println(principal);
-//        AuthorDetailDto dto = authorService.myinfo();
-//        return ResponseEntity.status(HttpStatus.OK).body(dto);
-//    }
+    @GetMapping("/myinfo")
+    public ResponseEntity<?> myinfo(@AuthenticationPrincipal String email){
+        AuthorDetailDto dto = authorService.myinfo(email);
+        return ResponseEntity.status(HttpStatus.OK).body(dto);
+    }
+
+
+    @PostMapping("/refresh-at")
+    public ResponseEntity<?>  refreshAt(@RequestBody RefreshTokenDto dto){
+//        rt검증(1.토큰 자체 검증 2.redis조회 검증)
+        Author author = jwtTokenProvider.validateRt(dto.getRefreshToken());
+//        at신규 생성
+        String accessToken = jwtTokenProvider.createToken(author);
+//        refresh생성 및 저장
+        AuthorLoginResDto authorLoginResDto = AuthorLoginResDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(dto.getRefreshToken())
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(authorLoginResDto);
+    }
+
 
 }

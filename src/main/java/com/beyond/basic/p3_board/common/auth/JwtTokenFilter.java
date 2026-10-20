@@ -31,11 +31,6 @@ public class JwtTokenFilter extends GenericFilter {
             HttpServletRequest req = (HttpServletRequest) request;
 //        관례적으로 Bearer라는 문자열을 토큰 붙여서 전송
             String bearerToken = req.getHeader("Authorization");
-            if(bearerToken == null){
-//            token이 없는 경우 검증을 할수가 없으므로, filter chain으로 return
-                chain.doFilter(request, response);
-                return;
-            }
 //        Bearer문자열을 제거한 후에 jwt token만을 검증
             String token = bearerToken.substring(7);
 //        token 검증 및 claims 추출
@@ -49,10 +44,10 @@ public class JwtTokenFilter extends GenericFilter {
 //        권한의 경우 다수의 권한을 가질수 있으므로 일반적으로 List로 설계
             List<GrantedAuthority> authorities = new ArrayList<>();
 //        권한을 세팅할때 권한은 ROLE_라는 키워드를 붙임으로서 추후 권한체크 어노테이션사용 가능
-//            authorities.add(new SimpleGrantedAuthority("ROLE_"+claims.get("role")));
+            authorities.add(new SimpleGrantedAuthority("ROLE_"+claims.get("role")));
 
 //        1)pricipal : email 2)credentials :토큰 3)authorities : 권한묶음
-            Authentication authentication = new UsernamePasswordAuthenticationToken(claims.get("sub"), null, null);
+            Authentication authentication = new UsernamePasswordAuthenticationToken(claims.get("sub"), "", authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }catch(Exception e){
             e.printStackTrace();
