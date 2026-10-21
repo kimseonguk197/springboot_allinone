@@ -15,5 +15,5 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
     List<Address> findAllFetchJoin();
 
     @EntityGraph(attributePaths = {"author"})
-    List<Address> findAllWithAuthor();
+    List<Address> findAll();
 }

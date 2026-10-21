@@ -1,6 +1,7 @@
 package com.beyond.basic.p3_board.common.exception;
 
 import com.beyond.basic.p3_board.common.dtos.CommonErrorDto;
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import java.util.NoSuchElementException;
 
 //컨트롤러 어노테이션이 붙어있는 모든 클래스의 예외를 아래 클래스에서 인터셉팅(가로채기)
 @RestControllerAdvice
+@Hidden
 public class CommonExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<?> illegal(IllegalArgumentException e){

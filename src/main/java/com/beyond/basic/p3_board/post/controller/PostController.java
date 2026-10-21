@@ -2,7 +2,6 @@ package com.beyond.basic.p3_board.post.controller;
 
 import com.beyond.basic.p3_board.post.dtos.*;
 import com.beyond.basic.p3_board.post.service.PostService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@Slf4j
 @RequestMapping("/post")
 public class PostController {
     private final PostService postService;
@@ -52,11 +50,12 @@ public class PostController {
     }
 
 
-    @GetMapping("")
+    @GetMapping("/paging")
 //    페이징처리를 위한 데이터 요청 형식 : localhost:8080/post?page=0&size=5&sort=title,asc
 //    검색+페이징처리를 위한 데이터 요청 형식 : localhost:8080/post?page=0&size=5&sort=title,asc&title=hello&category=경제
     public Page<PostListDto> postListPaging(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
                                          @ModelAttribute PostSearchDto searchDto){
+//        return  postService.findAllPaging(pageable);
         return  postService.findAllPaging(pageable, searchDto);
     }
 }

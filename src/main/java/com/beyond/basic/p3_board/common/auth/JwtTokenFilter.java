@@ -31,6 +31,11 @@ public class JwtTokenFilter extends GenericFilter {
             HttpServletRequest req = (HttpServletRequest) request;
 //        관례적으로 Bearer라는 문자열을 토큰 붙여서 전송
             String bearerToken = req.getHeader("Authorization");
+            if(bearerToken == null){
+//            token이 없는 경우 검증을 할수가 없으므로, filter chain으로 return
+                chain.doFilter(request, response);
+                return;
+            }
 //        Bearer문자열을 제거한 후에 jwt token만을 검증
             String token = bearerToken.substring(7);
 //        token 검증 및 claims 추출

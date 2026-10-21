@@ -10,9 +10,9 @@ spring:
 #  스키마는 사전 생성 필요, 테이블의 경우 jdbc/mybatis는 사전생성 필요.
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/board
-    username: root
-    password: test1234
+    url: jdbc:mysql://${DB_URL}:3306/board
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 #  jpa를 사용하기 위한 환경설정
   jpa:
     database: mysql
@@ -29,12 +29,15 @@ spring:
       ddl-auto : validate
 #      콘솔창에 ddl, dml 등의 쿼리를 출력하여 보여주는 옵션
     show_sql: true
+  redis:
+    host: localhost
+    port: 6379
 
 jwt:
   expiration: 30
   #  인코딩된 문자 32자 이상 필요.(특수문자) : base64 encoder
   #  beyondaccesstokensecretkeybeyondaccesstokensecretkeybeyondaccesstokensecretkey
-  secretKey: YmV5b25kYWNjZXNzdG9rZW5zZWNyZXRrZXliZXlvbmRhY2Nlc3N0b2tlbnNlY3JldGtleWJleW9uZGFjY2Vzc3Rva2Vuc2VjcmV0a2V5
+  secretKey: ${JWT_SECRET_KEY}
 
 #logback의 로그레벨 : trace < debug < info < error 순서
 logging:
@@ -44,8 +47,8 @@ logging:
 #aws s3 접근하기 위한 계정 세팅
 aws:
   credentials:
-    access-key: yyyyyyyyyyyyyyyyy
-    secret-key: xxxxxxxxxxxxxxxxxxx
+    access-key: ${AWS_ACCESS_KEY}
+    secret-key: ${AWS_SECRET_KEY}
   region: ap-northeast-2
   s3:
     bucket1: bradkim-board-profile-image

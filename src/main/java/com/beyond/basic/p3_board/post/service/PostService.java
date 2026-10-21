@@ -2,6 +2,7 @@ package com.beyond.basic.p3_board.post.service;
 
 import com.beyond.basic.p3_board.author.domain.Author;
 import com.beyond.basic.p3_board.author.repository.AuthorRepository;
+import com.beyond.basic.p3_board.common.sse.SseAlarmService;
 import com.beyond.basic.p3_board.post.domain.AuthorPost;
 import com.beyond.basic.p3_board.post.domain.Post;
 import com.beyond.basic.p3_board.post.dtos.*;
@@ -35,11 +36,14 @@ public class PostService {
     @Value("${aws.s3.bucket1}")
     private String bucket;
     private final S3Client s3Client;
+
+    private final SseAlarmService sseAlarmService;
     @Autowired
-    public PostService(PostRepository postRepository, AuthorRepository authorRepository, S3Client s3Client) {
+    public PostService(PostRepository postRepository, AuthorRepository authorRepository, S3Client s3Client, SseAlarmService sseAlarmService) {
         this.postRepository = postRepository;
         this.authorRepository = authorRepository;
         this.s3Client = s3Client;
+        this.sseAlarmService = sseAlarmService;
     }
 
     public void save(PostCreateDto dto){
@@ -72,6 +76,11 @@ public class PostService {
             String imgUrl = s3Client.utilities().getUrl(a->a.bucket(bucket).key(fileName)).toExternalForm();
             post.updateImageUrl(imgUrl);
         }
+
+
+//        주문성공시 admin 유저에게 알림메시지 전송
+        String message = post.getId() + "게시글이 등록 되었습니다.";
+        sseAlarmService.sendMessage("admin@naver.com", email, message);
     }
 
 
@@ -115,8 +124,9 @@ public class PostService {
     }
 
     public Page<PostListDto> findAllPaging(Pageable pageable, PostSearchDto searchDto){
-//        List<Post> postList = postRepository.findAllByDelYn("N");
 //        Page<Post> postList = postRepository.findAll(pageable);
+//    Page<Post> postList = postRepository.findAll("N", pageable);
+
 
 //        검색을 위한 Specification 객체 조립
         Specification<Post> specification = new Specification<Post>() {
@@ -128,9 +138,6 @@ public class PostService {
 //                root : 엔티티의 컬럼명을 접근하기 위한 객체, criteriaBuilder:쿼리를 생성하기 위한 객체
                 if(searchDto.getTitle() != null){
                     predicateList.add(criteriaBuilder.like(root.get("title"), "%"+searchDto.getTitle()+"%"));
-                }
-                if(searchDto.getCategory() != null){
-                    predicateList.add(criteriaBuilder.equal(root.get("category"), searchDto.getCategory()));
                 }
                 if(searchDto.getContents() != null){
                     predicateList.add(criteriaBuilder.like(root.get("contents"), "%"+searchDto.getContents()+"%"));
@@ -144,12 +151,14 @@ public class PostService {
                 return predicate;
             }
         };
+        Page<Post> postList = postRepository.findAll(specification, pageable);
 
-        Page<Post> postList = postRepository.findAll(pageable);
-//    Page<Post> postList = postRepository.findAll(pageable, "N");
-//        Page<Post> postList = postRepository.findAll(specification, pageable);
 //        Page객체 안에 Entity->Dto로 쉽게 변환할수 있는 편의 제공
-        return null;
+        Page<PostListDto> postListDtos =  postList.map(p -> PostListDto.builder()
+                .id(p.getId())
+                .title(p.getTitle())
+                .build());
+        return postListDtos;
     }
 
     public void delete(Long id){
