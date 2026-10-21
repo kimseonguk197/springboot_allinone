@@ -26,6 +26,8 @@ public class Post extends BaseTimeEntity {
 //    @Column(nullable = false)
 //    private Long authorId;
 
+    private String imagePath;
+
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
     @Builder.Default
     private List<AuthorPost> authorPostList = new ArrayList<>();
@@ -49,5 +51,10 @@ public class Post extends BaseTimeEntity {
 
     public void updateAppointment(String appointment){
         this.appointment = appointment;
+    }
+
+
+    public void updateImageUrl(String url){
+        this.imagePath = url;
     }
 }

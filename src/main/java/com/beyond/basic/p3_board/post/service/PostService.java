@@ -12,13 +12,18 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,10 +32,14 @@ import java.util.List;
 public class PostService {
     private final PostRepository postRepository;
     private final AuthorRepository authorRepository;
+    @Value("${aws.s3.bucket1}")
+    private String bucket;
+    private final S3Client s3Client;
     @Autowired
-    public PostService(PostRepository postRepository, AuthorRepository authorRepository) {
+    public PostService(PostRepository postRepository, AuthorRepository authorRepository, S3Client s3Client) {
         this.postRepository = postRepository;
         this.authorRepository = authorRepository;
+        this.s3Client = s3Client;
     }
 
     public void save(PostCreateDto dto){
@@ -46,6 +55,23 @@ public class PostService {
                 .build();
         post.getAuthorPostList().add(authorPost);
         postRepository.save(post);
+
+//        AWS S3에 이미지 업로드
+        if(dto.getImage() != null){
+            String fileName = "board-"+post.getId()+"-"+dto.getImage().getOriginalFilename();
+            PutObjectRequest request = PutObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(fileName)
+                    .contentType(dto.getImage().getContentType())
+                    .build();
+            try {
+                s3Client.putObject(request, RequestBody.fromBytes(dto.getImage().getBytes()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            String imgUrl = s3Client.utilities().getUrl(a->a.bucket(bucket).key(fileName)).toExternalForm();
+            post.updateImageUrl(imgUrl);
+        }
     }
 
 
@@ -75,9 +101,21 @@ public class PostService {
         return postDetailDto;
     }
 
-    public Page<PostListDto> findAll(Pageable pageable, PostSearchDto searchDto){
+    public List<PostListDto> findAll(){
+        List<Post> postList =  postRepository.findAll();
+        List<PostListDto> postListDtos = new ArrayList<>();
+        for (Post p : postList){
+            PostListDto dto = PostListDto.builder()
+                    .id(p.getId())
+                    .title(p.getTitle())
+                    .build();
+            postListDtos.add(dto);
+        }
+        return postListDtos;
+    }
+
+    public Page<PostListDto> findAllPaging(Pageable pageable, PostSearchDto searchDto){
 //        List<Post> postList = postRepository.findAllByDelYn("N");
-//        List<Post> postList = postRepository.findAllFetchInnerJoin();
 //        Page<Post> postList = postRepository.findAll(pageable);
 
 //        검색을 위한 Specification 객체 조립
@@ -107,7 +145,9 @@ public class PostService {
             }
         };
 
-        Page<Post> postList = postRepository.findAll(specification, pageable);
+        Page<Post> postList = postRepository.findAll(pageable);
+//    Page<Post> postList = postRepository.findAll(pageable, "N");
+//        Page<Post> postList = postRepository.findAll(specification, pageable);
 //        Page객체 안에 Entity->Dto로 쉽게 변환할수 있는 편의 제공
         return null;
     }

@@ -11,6 +11,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @Slf4j
 @RequestMapping("/post")
@@ -23,7 +25,7 @@ public class PostController {
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public void postCreate(@RequestBody PostCreateDto dto){
+    public void postCreate(@ModelAttribute PostCreateDto dto){
         postService.save(dto);
     }
 
@@ -36,17 +38,25 @@ public class PostController {
         return postService.findById(id);
     }
 
+
     @GetMapping("/list")
 //    페이징처리를 위한 데이터 요청 형식 : localhost:8080/posts?page=0&size=5&sort=title,asc
 //    검색+페이징처리를 위한 데이터 요청 형식 : localhost:8080/posts?page=0&size=5&sort=title,asc&title=hello&category=경제
-    public Page<PostListDto> postListdto(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-                                         @ModelAttribute PostSearchDto searchDto){
-        log.info("dto : {}", searchDto);
-        return  postService.findAll(pageable, searchDto);
+    public List<PostListDto> postList(){
+        return  postService.findAll();
     }
 
     @DeleteMapping("/{id}")
     public void postDelete(@PathVariable Long id){
         postService.delete(id);
+    }
+
+
+    @GetMapping("")
+//    페이징처리를 위한 데이터 요청 형식 : localhost:8080/post?page=0&size=5&sort=title,asc
+//    검색+페이징처리를 위한 데이터 요청 형식 : localhost:8080/post?page=0&size=5&sort=title,asc&title=hello&category=경제
+    public Page<PostListDto> postListPaging(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                                         @ModelAttribute PostSearchDto searchDto){
+        return  postService.findAllPaging(pageable, searchDto);
     }
 }
