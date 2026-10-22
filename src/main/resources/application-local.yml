@@ -32,6 +32,14 @@ spring:
       ddl-auto : update
 #      콘솔창에 ddl, dml 등의 쿼리를 출력하여 보여주는 옵션
     show_sql: true
+#  openai 연동을 위한 spring ai 설정. api-key는 환경변수(OPENAI_API_KEY)로 주입, 코드/yml에 직접 하드코딩하지 않음
+  ai:
+    openai:
+      api-key: xxxxxxxxxxxxx
+      chat:
+        options:
+          model: gpt-4o-mini
+          temperature: 0.3
 
 
 jwt:
