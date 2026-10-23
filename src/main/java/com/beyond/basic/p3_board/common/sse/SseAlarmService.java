@@ -29,7 +29,9 @@ public class SseAlarmService{
         try {
             SseEmitter sseEmitter =  sseEmitterRegistry.getEmitter(receiver);
             String data = objectMapper.writeValueAsString(dto);
-            sseEmitter.send(SseEmitter.event().name("registered").data(data));
+            if(sseEmitter !=null) {
+                sseEmitter.send(SseEmitter.event().name("registered").data(data));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

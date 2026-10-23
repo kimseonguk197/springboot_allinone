@@ -33,16 +33,12 @@ import java.util.List;
 public class PostService {
     private final PostRepository postRepository;
     private final AuthorRepository authorRepository;
-    @Value("${aws.s3.bucket1}")
-    private String bucket;
-    private final S3Client s3Client;
 
     private final SseAlarmService sseAlarmService;
     @Autowired
-    public PostService(PostRepository postRepository, AuthorRepository authorRepository, S3Client s3Client, SseAlarmService sseAlarmService) {
+    public PostService(PostRepository postRepository, AuthorRepository authorRepository, SseAlarmService sseAlarmService) {
         this.postRepository = postRepository;
         this.authorRepository = authorRepository;
-        this.s3Client = s3Client;
         this.sseAlarmService = sseAlarmService;
     }
 
@@ -59,23 +55,6 @@ public class PostService {
                 .build();
         post.getAuthorPostList().add(authorPost);
         postRepository.save(post);
-
-//        AWS S3에 이미지 업로드
-        if(dto.getImage() != null){
-            String fileName = "board-"+post.getId()+"-"+dto.getImage().getOriginalFilename();
-            PutObjectRequest request = PutObjectRequest.builder()
-                    .bucket(bucket)
-                    .key(fileName)
-                    .contentType(dto.getImage().getContentType())
-                    .build();
-            try {
-                s3Client.putObject(request, RequestBody.fromBytes(dto.getImage().getBytes()));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            String imgUrl = s3Client.utilities().getUrl(a->a.bucket(bucket).key(fileName)).toExternalForm();
-            post.updateImageUrl(imgUrl);
-        }
 
 
 //        주문성공시 admin 유저에게 알림메시지 전송

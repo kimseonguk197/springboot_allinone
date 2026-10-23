@@ -30,12 +30,13 @@ public class AuthorController {
     @PostMapping("/create")
 //    dto에 있는 validation어노테이션과 @Valid가 한쌍
     public ResponseEntity<?> create(@RequestBody @Valid AuthorCreateDto dto){
-        System.out.println(dto);
-//    public ResponseEntity<?> create(@RequestBody("author") @Valid AuthorCreateDto dto){
-//                                    @RequestPart("profileImage") MultipartFile profileImage){
+//    public ResponseEntity<?> create(@RequestPart("author") @Valid AuthorCreateDto dto,
+//                                    @RequestPart(value = "profileImage", required = false) MultipartFile profileImage){
 
+        System.out.println(dto);
 //        아래 예외처리는 ExceptionHandler에서 전역적으로 예외처리
         authorService.save(dto);
+//        authorService.save(dto, profileImage);
         return ResponseEntity.status(HttpStatus.CREATED).body("OK");
     }
 

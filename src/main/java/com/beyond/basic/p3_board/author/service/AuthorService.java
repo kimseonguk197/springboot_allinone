@@ -50,6 +50,7 @@ public class AuthorService {
     }
 
     public void save(AuthorCreateDto dto){
+//    public void save(AuthorCreateDto dto, MultipartFile profileImage){
 
 //        email중복여부 검증
         if(authorRepository.findByEmail(dto.getEmail()).isPresent()){
@@ -75,9 +76,10 @@ public class AuthorService {
                 .build();
         addressRepository.save(address);
 
+
 ////       파일을 업로드를 위한 저장 객체 구성
-//        if(profileImage != null){
-//            String fileName = "user-"+author.getId()+"-profileimage-"+profileImage.getOriginalFilename();
+//        if(profileImage != null) {
+//            String fileName = "user-" + author.getId() + "-profileimage-" + profileImage.getOriginalFilename();
 //            PutObjectRequest request = PutObjectRequest.builder()
 //                    .bucket(bucket)
 //                    .key(fileName)
@@ -90,8 +92,9 @@ public class AuthorService {
 //                throw new RuntimeException(e);
 //            }
 ////        aws의 이미지 url 추출
-//            String imgUrl = s3Client.utilities().getUrl(a->a.bucket(bucket).key(fileName)).toExternalForm();
+//            String imgUrl = s3Client.utilities().getUrl(a -> a.bucket(bucket).key(fileName)).toExternalForm();
 //            author.updateProfileImageUrl(imgUrl);
+//        }
     }
 
 //    트랜잭션 처리가 필요없는 조회만 있는 메서드의 경우 성능향상을 위해 readOnly처리

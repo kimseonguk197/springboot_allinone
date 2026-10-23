@@ -54,7 +54,4 @@ public class Post extends BaseTimeEntity {
     }
 
 
-    public void updateImageUrl(String url){
-        this.imagePath = url;
-    }
 }

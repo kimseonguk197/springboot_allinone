@@ -21,6 +21,4 @@ public class PostCreateDto {
     @Builder.Default
     private LocalDateTime appointmentTime=LocalDateTime.now();
 
-    private MultipartFile image;
-
 }

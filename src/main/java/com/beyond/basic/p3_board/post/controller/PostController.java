@@ -23,7 +23,7 @@ public class PostController {
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public void postCreate(@ModelAttribute PostCreateDto dto){
+    public void postCreate(@RequestBody PostCreateDto dto){
         postService.save(dto);
     }
 
