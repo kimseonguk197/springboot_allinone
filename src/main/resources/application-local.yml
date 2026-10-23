@@ -18,9 +18,7 @@ spring:
     password: test1234
 #  jpa를 사용하기 위한 환경설정
   jpa:
-    database: mysql
-#    innoDB를 쓰겠다라는 설정
-    database-platform: org.hibernate.dialect.MySQLDialect
+#    springboot4에서는 별도의 database지정없이도 datasource를 보고 추론
 #    ddl문(테이블생성) 자동생성 여부 : true
     generate-ddl: true
 #    jpa(인터페이스 명세)의 실질적인 구현체는 hibernate

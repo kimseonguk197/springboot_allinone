@@ -3,6 +3,8 @@ package com.beyond.basic.p3_board.common.auth;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,16 +15,26 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 //토큰 검증 후 Authentication객체 생성
 @Component
-public class JwtTokenFilter extends GenericFilter {
+//springboot3에서 사용하던 GenericFilter에서 Filter로 변경
+public class JwtTokenFilter implements Filter {
 
     @Value("${jwt.secretKey}")
     private String secret_key_string;
+
+    private SecretKey signingKey;
+
+    @PostConstruct
+    public void init(){
+        signingKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret_key_string));
+    }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -38,12 +50,12 @@ public class JwtTokenFilter extends GenericFilter {
             }
 //        Bearer문자열을 제거한 후에 jwt token만을 검증
             String token = bearerToken.substring(7);
-//        token 검증 및 claims 추출
-            Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(secret_key_string)
+//        token 검증 및 payload 추출
+            Claims claims = Jwts.parser()
+                    .verifyWith(signingKey)
                     .build()
-                    .parseClaimsJws(token)
-                    .getBody();
+                    .parseSignedClaims(token)
+                    .getPayload();
 
 //        claims를 기반으로 Authentication객체 생성
 //        권한의 경우 다수의 권한을 가질수 있으므로 일반적으로 List로 설계

@@ -1,7 +1,7 @@
 package com.beyond.basic.p3_board.common.exception;
 
 import com.beyond.basic.p3_board.common.dtos.CommonErrorDto;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 
 @Component
 public class JwtAuthenticationHandler implements AuthenticationEntryPoint {
+//    springboot3의 com.fasterxml에서 tools패키지로 변경
     private final  ObjectMapper objectMapper;
     public JwtAuthenticationHandler(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
