@@ -6,7 +6,7 @@ import lombok.*;
 
 @Data //getter + setter + toString
 @AllArgsConstructor //모든 매개변수를 가진 생성자
-//@NoArgsConstructor //매개변수 없는 기본 생성자. 객체바인딩을 위해 반드시 필요
+@NoArgsConstructor //매개변수 없는 기본 생성자. 객체바인딩을 위해 반드시 필요
 public class Member1 {
 //    java에서 class내의 변수는 일반적으로 은닉하기 위해 private으로 생성
     private String name;

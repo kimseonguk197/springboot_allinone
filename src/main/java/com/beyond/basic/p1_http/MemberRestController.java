@@ -92,7 +92,7 @@ public class MemberRestController {
         return "ok";
     }
 
-//    case3-2)배열형식의 json데이터 처리
+//    case3-2)리스트형식의 json데이터 처리
 //    형식 : [{"name":"hongildong", "email":"hong1@naver.com"}, {"name":"hongildong", "email":"hong2@naver.com"}, {"name":"hongildong", "email":"hong3@naver.com"}]
     @PostMapping("/json-list")
 //    RequestBody : json데이터를 객체로 파싱

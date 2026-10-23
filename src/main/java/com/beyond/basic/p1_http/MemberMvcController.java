@@ -40,7 +40,7 @@ public class MemberMvcController {
     }
 
     //    case1-2)서버가 사용자에게 json형식의 문자데이터 return
-    @GetMapping("/json-data")
+    @GetMapping("/json")
     @ResponseBody
     public Member1 jsonDataReturn() throws JsonProcessingException {
         Member1 m1 = new Member1("h1", "h1@naver.com");
